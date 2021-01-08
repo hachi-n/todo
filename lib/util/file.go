@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	defaultPerm = 0666
+	defaultFilePerm = 0666
+	defaultDirPerm = 0755
 )
 
 func LoadFile(filePath string) (string, error) {
@@ -30,12 +31,21 @@ func CreateFile(filePath string, data string) error {
 		return err
 	}
 
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, defaultPerm)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, defaultFilePerm)
 	if err != nil {
 		return err
 	}
 
 	io.Copy(f, reader)
+	return nil
+}
+
+func MkDirAll(dirPath string) error {
+
+	if err :=os.MkdirAll(dirPath, defaultDirPerm); err != nil {
+		return err
+	}
 
 	return nil
+
 }

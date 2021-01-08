@@ -22,7 +22,14 @@ func Apply(markdownPath string) error {
 		newTodoList.Merge(currentTodoList)
 	}
 
-	return newTodoList.Save()
+	if err := newTodoList.Save(); err != nil {
+		return err
+	}
+
+	fmt.Println(newTodoList)
+
+
+	return nil
 }
 
 func loadInputMessage(markdownPath string) (message string, err error) {
@@ -37,10 +44,22 @@ func loadInputMessage(markdownPath string) (message string, err error) {
 func loadStdinMessage() (message string, err error) {
 	// TODO
 	// While Reading bug.
+	fmt.Println("Please enter your todolist. <paste> and <enter>")
 	scanner := bufio.NewScanner(os.Stdin)
 	buf := new(bytes.Buffer)
+
 	for scanner.Scan() {
-		fmt.Fprintf(buf, "%s\n", scanner.Text())
+		line := scanner.Text()
+		if err := scanner.Err(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		if line == "" {
+			break
+		}
+
+		fmt.Fprintf(buf, "%s\n", line)
 	}
 	message = buf.String()
 	return
